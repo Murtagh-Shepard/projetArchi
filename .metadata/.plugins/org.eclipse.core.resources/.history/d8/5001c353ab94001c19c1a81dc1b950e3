@@ -1,0 +1,9 @@
+package tpArchi.interfacePlugin;
+
+import tpArchi.model.Person;
+
+public interface StrategyAffichage {
+
+	void affichage(Person p);
+
+}

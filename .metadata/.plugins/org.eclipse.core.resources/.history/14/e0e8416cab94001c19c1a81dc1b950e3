@@ -1,0 +1,4 @@
+projetPlugin.interfacePlugin.StrategyAffichage:
+   1 :
+      nom : "tier.AffichageMieux"
+      descriptor : "ertr"

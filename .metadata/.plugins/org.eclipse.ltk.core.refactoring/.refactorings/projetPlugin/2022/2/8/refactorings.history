@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename package &apos;tpArchi&apos; to &apos;base&apos;&#x0A;- Original project: &apos;projetPlugin&apos;&#x0A;- Original element: &apos;projetPlugin/src/tpArchi&apos;&#x0A;- Renamed element: &apos;projetPlugin/src/base&apos;&#x0A;- Update references to refactored element&#x0A;- Update textual occurrences in comments and strings&#x0A;- Rename subpackages of the package" description="Rename package &apos;tpArchi&apos;" flags="589830" hierarchical="true" id="org.eclipse.jdt.ui.rename.package" input="/src&lt;tpArchi" name="base" qualified="false" references="true" stamp="1645622410782" textual="false" version="1.0"/>
+</session>
