@@ -1,0 +1,10 @@
+appliDemo.interfacePlugin.StrategyAffichage:
+   1 :
+      nom : "Affichage de base"
+      descripteur : "ertr"
+      
+      			"name":"Application RDV medicaux",
+			"className":"appliRDV.Appli",
+			"autorun":"true",
+			"params":[],
+			"requirements":["Affichage en tableau","Chargement par fichier"],

@@ -1,0 +1,109 @@
+/**
+ * 
+ */
+package plateforme;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
+
+import org.yaml.snakeyaml.Yaml;
+
+import jdk.internal.loader.Loader;
+import plateforme.model.Descripteur;
+
+/**
+ * The Class PluginLoader.
+ *
+ * @author alexandre
+ */
+public class PluginLoader {
+
+	private static final String CONF_PATH = "config.yml";
+
+	private static HashMap<String, Descripteur> descripteurs;
+
+	private static final PluginLoader instance = new PluginLoader();
+
+	public static final PluginLoader getInstance() {
+		return instance;
+	}
+
+	public PluginLoader() {
+
+	}
+
+	/**
+	 * Parcourt les descripteurs de pluggins et lance la m�thode run sur ceux qui
+	 * sont tagg�s "autorun"
+	 */
+	private void autoRun() {
+		for (Descripteur d : descriptionsPlugins.values()) {
+			if (d.isAutoRun()) {
+				try {
+					Thread t = new Thread((Runnable) Loader.loadPluginsFor(d, null));
+					t.start();
+				} catch (SecurityException | IllegalArgumentException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+
+	public static void main(String[] args) {
+		PluginLoader loader = PluginLoader.getInstance();
+		loader.chargerDescripteurs();
+		loader.autoRun();
+		loader.notifyInit();
+
+	}
+
+	/**
+	 * Méthode de chargement des descripteurs.
+	 *
+	 */
+	public void chargerDescripteurs() {
+		Yaml yaml = new Yaml();
+
+		HashMap configMap;
+		try {
+			InputStream inputStream = new FileInputStream("config.yml");
+
+			configMap = yaml.load(inputStream);
+
+			Class<?> cl = null;
+			Set<Integer> keys = configMap.keySet();
+			for (Integer key : keys) {
+				Descripteur descripteur = new Descripteur();
+				descripteur.setName((String) configMap.get("nom"));
+				descripteur.setClassName((String) configMap.get("className"));
+				descripteur.setAutoRun(Boolean.parseBoolean((String) configMap.get("autorun")));
+				HashMap pluginMap = (HashMap) configMap.get(key);
+				cl = Class.forName((String) pluginMap.get("nom"));
+				List<String> reqs = (List<String>) configMap.get("requirements");
+				if (reqs == null || !reqs.isEmpty()) {
+					descripteur.setRequirements(reqs);
+				}
+				// Gestion arguments constructeur par défaut
+				List<String> args = (List<String>) configMap.get("params");
+				if (args == null || !args.isEmpty()) {
+					descripteur.addArgs(args);
+				}
+				// Gestion dependecy : pluginParent
+				if (configMap.get("dependency") != null || configMap.get("dependency") != "") {
+					descripteur.setDependency((String) configMap.get("dependency"));
+				}
+				descripteurs.put(descripteur.getName(), descripteur);
+			}
+
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+}

@@ -1,0 +1,9 @@
+   1 :
+      nom : "Affichage de base"
+      nomClasse : "ertr"
+      
+      			"name":"Application RDV medicaux",
+			"className":"appliRDV.Appli",
+			"autorun":"true",
+			"params":[],
+			"requirements":["Affichage en tableau","Chargement par fichier"],

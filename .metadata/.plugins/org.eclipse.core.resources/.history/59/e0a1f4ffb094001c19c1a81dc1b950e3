@@ -1,0 +1,15 @@
+package plateforme.model;
+
+import java.util.List;
+
+public class Descripteur {
+	
+	/** The name. */
+	protected String name;
+	protected String className;
+	protected boolean autoRun;
+	protected Class[] args; 
+	protected List<String> requirements;
+	protected String dependency;
+	protected boolean loaded;
+}

@@ -1,0 +1,34 @@
+package appliDemo;
+
+import java.util.HashMap;
+
+import appliDemo.interfacePlugin.StrategyAffichage;
+import appliDemo.model.Person;
+import plateforme.DescripteurPlugin;
+import plateforme.PluginLoader;
+
+public class Demo implements Runnable {
+	private StrategyAffichage afficheur;
+
+	private HashMap<String, DescripteurPlugin> descriptionPluginsDispos;
+
+	public void run() {
+		PluginLoader pluginLoader = PluginLoader.getInstance();
+		afficheur = (StrategyAffichage) pluginLoader.getPlugin(StrategyAffichage.class);
+		// CHargement de données
+		Person p = new Person("machin", 80);
+		// Traitement
+		p.setAge(p.getAge() + 1);
+
+		// Affichage des données
+		affichage(p);
+	}
+
+	public static void main(String[] args) {
+		new Demo();
+	}
+
+	public void affichage(Person p) {
+		afficheur.affichage(p);
+	}
+}

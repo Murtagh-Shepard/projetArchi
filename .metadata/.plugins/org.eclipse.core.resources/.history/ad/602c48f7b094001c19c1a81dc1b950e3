@@ -1,0 +1,18 @@
+package plateforme.model;
+
+import java.util.List;
+
+public class Descripteur {
+	
+	/** The name. */
+	protected String name;
+	protected String className;
+	protected boolean autoRun;
+	// paramètre du constructeur par défaut de la classe principale du plugin
+	protected Class[] args; 
+	// plugins nécessaires au lancement du plugin
+	protected List<String> requirements;
+	// plugin parent (si existant)
+	protected String dependency;
+	protected boolean loaded;
+}

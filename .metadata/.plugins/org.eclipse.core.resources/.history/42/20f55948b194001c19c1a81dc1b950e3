@@ -1,0 +1,31 @@
+package plateforme.model;
+
+import java.util.List;
+
+// TODO: Auto-generated Javadoc
+/**
+ * The Class Descripteur.
+ */
+public class Descripteur {
+	
+	/** The name. */
+	protected String nom;
+	
+	/** The class name. */
+	protected String className;
+	
+	/** The auto run. */
+	protected boolean autoRun;
+	
+	/** The args. */
+	protected Class[] args; 
+	
+	/** The requirements. */
+	protected List<String> requirements;
+	
+	/** The dependency. */
+	protected String dependency;
+	
+	/** The loaded. */
+	protected boolean loaded;
+}

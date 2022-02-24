@@ -1,0 +1,38 @@
+package appliDemo;
+
+import java.util.HashMap;
+
+import appliDemo.interfacePlugin.StrategyAffichage;
+import appliDemo.model.Person;
+import plateforme.PluginLoader;
+import plateforme.model.Descripteur;
+
+public class Demo implements Runnable {
+	private StrategyAffichage afficheur;
+
+	private HashMap<String, Descripteur> descripteursPlugins;
+
+	private final static PluginLoader  INSTANCE = PluginLoader.getInstance();
+
+	public Demo() {
+		LOADER = PluginLoader.getInstance();
+		descripteursPlugins = LOADER.getDescripteurs(APPNAME);
+		afficheur = (StrategyAffichage) LOADER.loadPluginsFor(descripteursPlugins.get("Affichage en tableau"), null);
+	}
+
+	public void run() {
+		PluginLoader pluginLoader = PluginLoader.getInstance();
+		afficheur = (StrategyAffichage) pluginLoader.getPlugin(StrategyAffichage.class);
+		// CHargement de données
+		Person p = new Person("machin", 80);
+		// Traitement
+		p.setAge(p.getAge() + 1);
+
+		// Affichage des données
+		affichage(p);
+	}
+
+	public void affichage(Person p) {
+		afficheur.affichage(p);
+	}
+}

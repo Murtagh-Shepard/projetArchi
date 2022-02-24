@@ -1,0 +1,151 @@
+/**
+ * 
+ */
+package plateforme;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
+
+import org.yaml.snakeyaml.Yaml;
+
+import jdk.internal.loader.Loader;
+import plateforme.model.Descripteur;
+
+/**
+ * The Class PluginLoader.
+ *
+ * @author alexandre
+ */
+public class PluginLoader {
+
+	private static final String CONF_PATH = "config.yml";
+
+	private static HashMap<String, Descripteur> descripteurs;
+
+	private static final PluginLoader INSTANCE = new PluginLoader();
+
+	public static final PluginLoader getInstance() {
+		return INSTANCE;
+	}
+
+	public PluginLoader() {
+
+	}
+
+	/**
+	 * Parcourt les descripteurs de pluggins et lance la m�thode run sur ceux qui
+	 * sont tagg�s "autorun"
+	 */
+	private void autoRun() {
+		for (Descripteur d : descripteurs.values()) {
+			if (d.isAutoRun()) {
+				try {
+					Thread t = new Thread((Runnable) INSTANCE.loadPluginsFor(d, null));
+					t.start();
+				} catch (SecurityException | IllegalArgumentException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+
+	public static void main(String[] args) {
+		PluginLoader loader = PluginLoader.getInstance();
+		loader.chargerDescripteurs();
+		loader.autoRun();
+		// loader.notifyInit();
+
+	}
+
+	/**
+	 * Méthode de chargement des descripteurs.
+	 *
+	 */
+	public void chargerDescripteurs() {
+		Yaml yaml = new Yaml();
+
+		HashMap configMap;
+		try {
+			InputStream inputStream = new FileInputStream("config.yml");
+
+			configMap = yaml.load(inputStream);
+
+			Class<?> cl = null;
+			Set<Integer> keys = configMap.keySet();
+			for (Integer key : keys) {
+				HashMap pluginMap = (HashMap) configMap.get(key);
+				Descripteur descripteur = new Descripteur();
+				descripteur.setName((String) pluginMap.get("nom"));
+				descripteur.setClassName((String) pluginMap.get("className"));
+				descripteur.setAutoRun(Boolean.parseBoolean((String) pluginMap.get("autorun")));
+				cl = Class.forName((String) pluginMap.get("nom"));
+				List<String> reqs = (List<String>) pluginMap.get("requirements");
+				if (reqs == null || !reqs.isEmpty()) {
+					descripteur.setRequirements(reqs);
+				}
+				// Gestion arguments constructeur par défaut
+				List<String> args = (List<String>) pluginMap.get("params");
+				if (args == null || !args.isEmpty()) {
+					descripteur.addArgs(args);
+				}
+				// Gestion dependecy : pluginParent
+				if (configMap.get("dependency") != null || pluginMap.get("dependency") != "") {
+					descripteur.setDependency((String) pluginMap.get("dependency"));
+				}
+				descripteurs.put(descripteur.getName(), descripteur);
+			}
+
+		} catch (FileNotFoundException | ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
+	public static HashMap<String, Descripteur> getDescripteursFor(String dependency) {
+		HashMap<String, DescripteurPlugin> descripteurs = new HashMap<String, DescripteurPlugin>();
+		for (DescripteurPlugin d : Loader.getInstance().getDescriptionsPlugins().values()) {
+			if (d.getDependency() != null && d.getDependency().equals(dependency)) {
+				descripteurs.put(d.getName(), d);
+			}
+		}
+		return descripteurs;
+
+	}
+
+	public static Object loadPluginsFor(Descripteur descripteurPlugin, Object[] args) {
+		PluginLoader instance = PluginLoader.getInstance();
+		// instance.notifySubscribers(descripteurPlugin.getName(),
+		// Status.ASKED.value());
+		Class c;
+		Constructor constructor;
+		Object plugin = null;
+		try {
+			c = Class.forName(descripteurPlugin.getClassName());
+			if (descripteurPlugin.getArgs() != null) {
+				constructor = c.getConstructor(descripteurPlugin.getArgs());
+			} else {
+				constructor = c.getConstructor(null);
+			}
+			plugin = constructor.newInstance(args);
+
+			// instance.getDescriptionsPlugins().get(descripteurPlugin.getName()).setLoaded(true);
+			// instance.notifySubscribers(descripteurPlugin.getName(),
+			// Status.LOADED.value());
+
+		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | NoSuchMethodException
+				| SecurityException | IllegalArgumentException | InvocationTargetException e) {
+			e.printStackTrace();
+			// instance.notifySubscribers(descripteurPlugin.getName(),
+			// Status.FAILURE.value());
+		}
+		return plugin;
+	}
+}

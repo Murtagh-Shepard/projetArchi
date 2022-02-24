@@ -3,8 +3,8 @@
  */
 package tier;
 
-import base.interfacePlugin.StrategyAffichage;
-import base.model.Person;
+import appliDemo.interfacePlugin.StrategyAffichage;
+import appliDemo.model.Person;
 
 /**
  * @author alexandre

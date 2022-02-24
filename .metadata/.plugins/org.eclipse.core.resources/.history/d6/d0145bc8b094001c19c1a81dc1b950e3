@@ -1,0 +1,6 @@
+package plateforme.model;
+
+public class Descripteur {
+	protected String nom;
+
+}

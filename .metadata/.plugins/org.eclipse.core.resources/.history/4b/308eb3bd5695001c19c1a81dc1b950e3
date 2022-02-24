@@ -1,0 +1,12 @@
+1 :
+   nom : "Affichage de base"
+   nomClasse : "tier.AfficheDeBase"
+   autorun : false
+   params : []
+   requirements : []
+2 :
+   nom : "RDV Smarts"
+   nomClasse : "appliDemo.Demo"
+   autorun : true
+   params : []
+   requirements : ["Affichage de base"]

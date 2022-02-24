@@ -1,0 +1,6 @@
+1 :
+   nom : "Affichage de base"
+   nomClasse : "tier.AfficheDeBase"
+   autorun : false
+   params : []
+   requirements : []
