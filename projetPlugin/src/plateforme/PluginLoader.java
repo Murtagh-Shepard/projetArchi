@@ -76,6 +76,7 @@ public class PluginLoader {
 				// On lance un thread par plugin flaggé
 				try {
 					Thread t = new Thread((Runnable) this.recupererPlugin(d, null));
+					System.out.println("Plugin autorun : " + d.getClassName() + " a été chargé !");
 					t.start();
 				} catch (SecurityException | IllegalArgumentException e) {
 					// TODO Auto-generated catch block
@@ -120,6 +121,7 @@ public class PluginLoader {
 
 			// Parcours du fichier de conf
 			Set<Integer> keys = configMap.keySet();
+			System.out.println(keys.size() + " plugin(s) trouvé !");
 			for (Integer key : keys) {
 				HashMap pluginMap = (HashMap) configMap.get(key);
 				// Valorisation du descripteur
@@ -138,10 +140,14 @@ public class PluginLoader {
 				}
 				// Gestion des dépendences : valorisation du parent
 				if (configMap.get("dependances") != null || pluginMap.get("dependances") != "") {
+					if (pluginMap.get("dependances") != null) {
+						System.out.println("Le plugin " + descripteur.getName() + " a une dépendance : " + pluginMap.get("dependances"));
+					}
 					descripteur.setDependency((String) pluginMap.get("dependances"));
 				}
 				// Ajout à la liste des descripteurs
 				this.descripteurs.put(descripteur.getName(), descripteur);
+				System.out.println("Descripteur : " + descripteur.getName() + " ajouté");
 			}
 
 		} catch (FileNotFoundException e) {
